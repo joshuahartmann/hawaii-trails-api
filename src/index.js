@@ -20,7 +20,9 @@ app.use('/api', apiRouter);
 // routes
 apiRouter.use('/checkins', checkinsRouter);
 
-app.get('/green', (req, res) => {
+app.get('/:trailColor', (req, res) => {
+    const { trailColor } = req.params;
+
     const options = {
         root: path.join(__dirname, 'sample-data'),
         dotfiles: 'deny',
@@ -30,7 +32,7 @@ app.get('/green', (req, res) => {
         },
     };
 
-    const fileName = 'Green_Trails.geojson';
+    const fileName = `${trailColor}-trails.geojson`;
     res.sendFile(fileName, options, function (err) {
         if (err) {
             console.log(err);
