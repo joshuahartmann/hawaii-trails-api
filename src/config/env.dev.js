@@ -4,9 +4,16 @@ dotenv.config();
 
 const audience = process.env.AUTH0_AUDIENCE;
 const domain = process.env.AUTH0_DOMAIN;
-const serverPort = process.env.SERVER_PORT;
 const clientOriginUrl = process.env.CLIENT_ORIGIN_URL;
 const mongo_uri = process.env.MONGO_URI;
+
+let serverPort;
+
+if (process.env.NODE_ENV !== 'production') {
+    serverPort = process.env.PORT;
+} else {
+    serverPort = process.env.SERVER_PORT;
+}
 
 if (!audience) {
     throw new Error(
