@@ -10,9 +10,9 @@ const mongo_uri = process.env.MONGO_URI;
 let serverPort;
 
 if (process.env.NODE_ENV !== 'production') {
-    serverPort = process.env.PORT;
-} else {
     serverPort = process.env.SERVER_PORT;
+} else {
+    serverPort = process.env.PORT;
 }
 
 if (!audience) {
