@@ -45,7 +45,10 @@ if (!mongo_uri) {
     );
 }
 
-const clientOrigins = ['http://localhost:3000'];
+const clientOrigins = [
+    'http://localhost:3000',
+    'https://relaxed-lovelace-39f067.netlify.app',
+];
 
 module.exports = {
     audience,
