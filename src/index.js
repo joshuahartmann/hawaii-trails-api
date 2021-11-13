@@ -20,6 +20,9 @@ app.use('/api', apiRouter);
 // routes
 apiRouter.use('/checkins', checkinsRouter);
 
+app.get('/', (req, res) => {
+    res.send(`Hawai'i Trails API`);
+});
 app.get('/:trailColor', (req, res) => {
     const { trailColor } = req.params;
 
