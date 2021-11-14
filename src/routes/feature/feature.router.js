@@ -7,13 +7,42 @@ featureRouter.get('/', (req, res) => {
     FeatureModel.find({})
         .then((features) => {
             const formattedFeatures = features.map((feature) => {
+                const {
+                    _id,
+                    geometry,
+                    name,
+                    traffic,
+                    trailNumber,
+                    island,
+                    district,
+                    features,
+                    amenities,
+                    hazards,
+                    climate,
+                    elevationGain,
+                    difficulty,
+                    startPoint,
+                    endPoint,
+                } = feature;
                 return {
                     type: 'Feature',
-                    geometry: feature.geometry,
                     properties: {
-                        name: feature.name,
-                        traffic: feature.traffic,
+                        id: _id,
+                        name,
+                        traffic,
+                        difficulty,
+                        trailNumber,
+                        island,
+                        district,
+                        features: features.join(', '),
+                        amenities: amenities.join(', '),
+                        hazards: hazards.join(', '),
+                        climate: climate.join(', '),
+                        elevationGain,
+                        startPoint,
+                        endPoint,
                     },
+                    geometry,
                 };
             });
 
