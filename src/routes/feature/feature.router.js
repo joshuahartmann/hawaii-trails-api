@@ -57,6 +57,16 @@ featureRouter.get('/', (req, res) => {
         });
 });
 
+featureRouter.get('/:featureId', async (req, res) => {
+    const { featureId } = req.params;
+
+    const fields =
+        'features amenities hazards climate _id name trailNumber island district lengthMi difficulty startPoint endPoint rating traffic';
+
+    const feature = await FeatureModel.findById(featureId, fields).exec();
+    res.send(feature);
+});
+
 module.exports = {
     featureRouter,
 };
