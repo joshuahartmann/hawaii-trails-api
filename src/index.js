@@ -4,7 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { clientOrigins, serverPort } = require('./config/env.dev');
 
-const { checkinsRouter } = require('./checkins/checkins.router');
+const { checkinsRouter } = require('./routes/checkins/checkins.router');
 
 const { connectToDatabase } = require('./mongoose/mongoose');
 

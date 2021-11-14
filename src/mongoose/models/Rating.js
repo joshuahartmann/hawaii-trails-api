@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const CheckInSchema = new Schema({
+const RatingSchema = new Schema({
     date: {
         type: Date,
         default: Date.now(),
@@ -15,15 +15,15 @@ const CheckInSchema = new Schema({
         ref: 'Feature',
         required: true,
     },
-    ratingId: {
-        type: 'ObjectId',
-        ref: 'Rating',
+    rating: {
+        type: Number,
+        required: true,
     },
 });
 
-const CheckInModel = model('CheckIn', CheckInSchema);
+const RatingModel = model('Rating', RatingSchema);
 
 module.exports = {
-    CheckInSchema,
-    CheckInModel,
+    RatingSchema,
+    RatingModel,
 };

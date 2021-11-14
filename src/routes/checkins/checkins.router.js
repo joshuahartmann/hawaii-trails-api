@@ -1,6 +1,6 @@
 const express = require('express');
 const { postCheckin } = require('./checkins.service');
-const { checkJwt } = require('../authz/check-jwt');
+const { checkJwt } = require('../../authz/check-jwt');
 
 const checkinsRouter = express.Router();
 

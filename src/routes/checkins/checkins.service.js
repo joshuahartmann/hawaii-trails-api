@@ -1,4 +1,7 @@
-const { CheckInSchema, CheckInModel } = require('../mongoose/models/CheckIn');
+const {
+    CheckInSchema,
+    CheckInModel,
+} = require('../../mongoose/models/CheckIn');
 
 const postCheckin = async (user, trail) => {
     await CheckinsModel.create({ email: user.email, trail });
