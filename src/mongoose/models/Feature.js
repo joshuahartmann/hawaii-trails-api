@@ -5,18 +5,26 @@ const FeatureSchema = new Schema({
         type: Date,
         default: Date.now(),
     },
-    rating: Number,
     name: String,
+    trailNumber: String,
+    island: String,
+    district: String,
+    rating: Number,
     description: String,
     features: [String],
     amenities: [String],
+    hazards: [String],
     lengthMi: Number, // length in miles
     elevationGain: Number,
     difficulty: String,
     image: String,
     traffic: Number, // Number of check-ins
-    coordinates: {
-        type: [[Number, Number]],
+    startPoint: String,
+    endPoint: String,
+    climate: String,
+    geometry: {
+        geometryType: String, // 'LineString' / 'Polygon' etc.
+        coordinates: [Number], // [longitude, latitude]
     },
 });
 
