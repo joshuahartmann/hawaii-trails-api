@@ -17,7 +17,7 @@ String.prototype.removeWhitespace = function () {
     return this.trim().replace(/\s+/g, '');
 };
 
-async function main() {
+async function initializeDatabase() {
     const { type, features } = data;
     console.log(type, features);
 
@@ -56,6 +56,35 @@ async function main() {
     }
 }
 
+function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+async function assignTrafficData() {
+    const features = await FeatureModel.find();
+
+    for (const feature of features) {
+        const { id } = feature;
+
+        const update = {
+            traffic: randomNumber(0, 100),
+        };
+
+        const result = await FeatureModel.findOneAndUpdate(
+            { _id: id },
+            update,
+            {
+                new: true,
+            }
+        );
+
+        if (result) {
+            console.log(`Updated traffic to :${update.traffic}`);
+        }
+    }
+}
+
 module.exports = {
-    main,
+    initializeDatabase,
+    assignTrafficData,
 };

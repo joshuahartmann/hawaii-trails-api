@@ -3,11 +3,9 @@ const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const { clientOrigins, serverPort } = require('./config/env.dev');
-const { main } = require('./database-init/databaseInitializer');
 const { checkinsRouter } = require('./routes/checkins/checkins.router');
-
+const { featureRouter } = require('./routes/feature/feature.router');
 const { connectToDatabase } = require('./mongoose/mongoose');
-
 const app = express();
 const apiRouter = express.Router();
 
@@ -19,6 +17,7 @@ app.use('/api', apiRouter);
 
 // routes
 apiRouter.use('/checkins', checkinsRouter);
+apiRouter.use('/features', featureRouter);
 
 app.get('/', (req, res) => {
     res.send(`Hawai'i Trails API`);

@@ -5,7 +5,7 @@ async function connectToDatabase() {
     console.log('Connecting to MongoDB');
 
     // Read: https://mongoosejs.com/docs/deprecations.html#findandmodify
-    //mongoose.set('useFindAndModify', false);
+    mongoose.set('useFindAndModify', false);
 
     try {
         await mongoose.connect(mongo_uri, {
