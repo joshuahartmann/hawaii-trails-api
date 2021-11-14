@@ -3,7 +3,7 @@ const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const { clientOrigins, serverPort } = require('./config/env.dev');
-
+const { main } = require('./database-init/databaseInitializer');
 const { checkinsRouter } = require('./routes/checkins/checkins.router');
 
 const { connectToDatabase } = require('./mongoose/mongoose');

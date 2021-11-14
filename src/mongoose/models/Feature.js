@@ -14,6 +14,7 @@ const FeatureSchema = new Schema({
     features: [String],
     amenities: [String],
     hazards: [String],
+    climate: [String],
     lengthMi: Number, // length in miles
     elevationGain: Number,
     difficulty: String,
@@ -21,10 +22,9 @@ const FeatureSchema = new Schema({
     traffic: Number, // Number of check-ins
     startPoint: String,
     endPoint: String,
-    climate: String,
     geometry: {
-        geometryType: String, // 'LineString' / 'Polygon' etc.
-        coordinates: [Number], // [longitude, latitude]
+        type: { type: String }, // "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", and "GeometryCollection"
+        coordinates: 'Mixed', // [longitude, latitude]
     },
 });
 
