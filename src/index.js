@@ -6,6 +6,7 @@ const { clientOrigins, serverPort } = require('./config/env.dev');
 const { checkinsRouter } = require('./routes/checkins/checkins.router');
 const { featureRouter } = require('./routes/feature/feature.router');
 const { connectToDatabase } = require('./mongoose/mongoose');
+
 const app = express();
 const apiRouter = express.Router();
 
