@@ -63,8 +63,12 @@ featureRouter.get('/:featureId', async (req, res) => {
     const fields =
         'features amenities hazards climate _id name trailNumber island district lengthMi difficulty startPoint endPoint rating traffic';
 
-    const feature = await FeatureModel.findById(featureId, fields).exec();
-    res.send(feature);
+    if (featureId && featureId !== 'undefined') {
+        const feature = await FeatureModel.findById(featureId, fields).exec();
+        res.send(feature);
+    } else {
+        res.status(400).send('No featureId provided');
+    }
 });
 
 module.exports = {
