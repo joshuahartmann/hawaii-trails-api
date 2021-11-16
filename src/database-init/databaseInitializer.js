@@ -61,6 +61,30 @@ function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+/*
+   start, end       Date objects to generate a new date between.
+   n                Number of date objects to generate.
+
+   example usage:
+        generateNDateObjects(new Date(2020, 10, 15, 7, 0 ,0), new Date(2021, 10, 15, 19, 0, 0), 10);
+*/
+function generateNDateObjects(start, end, n) {
+    let ret = [];
+
+    for (let i = 0; i < n; i++) {
+        let day = new Date(
+            Math.floor(
+                Math.random() * (end.getTime() - start.getTime() + 1) +
+                    start.getTime()
+            )
+        );
+        day.setHours(Math.floor(Math.random() * (19 - 7 + 1) + 7)); // set hours between 7am-7pm
+        ret.push(day);
+    }
+
+    return ret;
+}
+
 async function assignTrafficData() {
     const features = await FeatureModel.find();
 
