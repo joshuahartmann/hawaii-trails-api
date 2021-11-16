@@ -1,4 +1,5 @@
-const data = require('./Na_Ala_Hele_Trails.json');
+const NaAlaHeleTrailsData = require('./Na_Ala_Hele_Trails.json');
+const OahuCountyParksData = require('./Parks.json');
 const { FeatureModel } = require('../mongoose/models/Feature');
 
 const keyValueMap = {
@@ -18,7 +19,7 @@ String.prototype.removeWhitespace = function () {
 };
 
 async function initializeDatabase() {
-    const { type, features } = data;
+    const { type, features } = NaAlaHeleTrailsData;
     console.log(type, features);
 
     for (const feature of features) {
@@ -189,8 +190,94 @@ function camelCaseToRegular(str) {
     }
 }
 
+async function populateFeatureTypeField() {
+    const features = await FeatureModel.find({});
+
+    for (const feature of features) {
+        const { id } = feature;
+
+        const update = {
+            featureType: 'trail',
+        };
+
+        const result = await FeatureModel.findOneAndUpdate(
+            { _id: id },
+            update,
+            {
+                new: true,
+            }
+        );
+
+        if (result) {
+            console.log(`Updated Feature: ${result._id}`);
+        }
+    }
+}
+
+async function initializeParksData() {
+    const { features } = OahuCountyParksData;
+
+    for (const feature of features) {
+        const { name, park_type } = feature.properties;
+        const { geometry } = feature;
+
+        const Feature = {};
+
+        Feature.name = name;
+        Feature.featureType = 'park';
+        Feature.island = 'Oahu';
+        Feature.features = [getParkType(park_type)];
+        Feature.traffic = randomNumber(0, 100);
+        Feature.geometry = geometry;
+
+        await FeatureModel.create(Feature);
+    }
+}
+
+function getParkType(parkType) {
+    // https://honolulu-cchnl.opendata.arcgis.com/datasets/cchnl::parks/about
+    switch (parkType) {
+        case 1:
+            return 'Mini Park';
+        case 2:
+            return 'Neighborhood Park';
+        case 3:
+            return 'Community Park';
+        case 4:
+            return 'District Park';
+        case 5:
+            return 'Urban';
+        case 6:
+            return 'Regional Park';
+        case 7:
+            return 'Beach Park';
+        case 8:
+            return 'Nature/Preserve';
+        case 9:
+            return 'Botanical Garden';
+        case 10:
+            return 'Zoo';
+        case 11:
+            return 'Pedestrian Mall';
+        case 12:
+            return 'Other';
+        case 13:
+            return 'Golf Course';
+        case 14:
+            return 'Shoreline Access';
+        case 15:
+            return 'Community Park/Garden';
+        case 16:
+            return 'Slide Areas';
+        default:
+            return 'Park';
+    }
+}
+
 module.exports = {
     initializeDatabase,
     assignTrafficData,
     fixStringsField,
+    initializeParksData,
+    populateFeatureTypeField,
 };
