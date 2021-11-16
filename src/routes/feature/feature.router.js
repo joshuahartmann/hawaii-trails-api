@@ -47,7 +47,7 @@ featureRouter.get('/parks', async (req, res) => {
         res.status(500).send(err);
     }
 
-    const formattedTrails = parks.map(formatFeatures);
+    const formattedParks = parks.map(formatFeatures);
 
     res.send({
         type: 'FeatureCollection',
@@ -55,7 +55,7 @@ featureRouter.get('/parks', async (req, res) => {
     });
 });
 
-featureRouter.get('/:featureId', async (req, res) => {
+featureRouter.get('/feature/:featureId', async (req, res) => {
     const { featureId } = req.params;
 
     const fields =
