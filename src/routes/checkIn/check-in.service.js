@@ -41,10 +41,13 @@ const queryRange = async (start, end) => {
 };
 
 const queryFeaturesByIdAndRange = async (featureId, start, end) => {
-    const checkInDocs = await CheckInModel.find({
-        featureId,
-        date: { $gt: start, $lt: end },
-    });
+    const checkInDocs = await CheckInModel.find(
+        {
+            featureId,
+            date: { $gt: start, $lt: end },
+        },
+        '_id'
+    );
     return checkInDocs;
 };
 

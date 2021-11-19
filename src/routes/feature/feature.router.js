@@ -31,27 +31,67 @@ featureRouter.get('/trails', async (req, res) => {
         res.status(500).send(err);
     }
 
-    let max = 0;
-    let min = 100;
+    const trailObjects = [];
+    const checkInNumbers = [];
 
     try {
         for (let i = 0; i < trails.length; i++) {
-            let numCheckIns = await queryFeaturesByIdAndRange(
+            const checkInDocs = await queryFeaturesByIdAndRange(
                 trails[i]._id,
                 new Date(2021, 9, 1),
                 new Date(2021, 9, 31)
             );
 
-            if (numCheckIns.length > max) max = numCheckIns.length;
-            if (numCheckIns.length < min) min = numCheckIns.length;
+            const {
+                _id,
+                featureType,
+                geometry,
+                name,
+                trailNumber,
+                island,
+                district,
+                features,
+                amenities,
+                hazards,
+                climate,
+                elevationGain,
+                difficulty,
+                startPoint,
+                endPoint,
+            } = trails[i];
+
+            const Feature = {};
+
+            Feature.traffic = checkInDocs.length;
+            Feature._id = _id;
+            Feature.featureType = featureType;
+            Feature.geometry = geometry;
+            Feature.name = name;
+            Feature.trailNumber = trailNumber;
+            Feature.island = island;
+            Feature.district = district;
+            Feature.features = features;
+            Feature.amenities = amenities;
+            Feature.hazards = hazards;
+            Feature.climate = climate;
+            Feature.elevationGain = elevationGain;
+            Feature.difficulty = difficulty;
+            Feature.startPoint = startPoint;
+            Feature.endPoint = endPoint;
+
+            trailObjects.push(Feature);
+            checkInNumbers.push(checkInDocs.length);
         }
     } catch (err) {
         console.log(err);
         res.status(500).send(err);
     }
 
-    const formattedTrails = trails.map(
-        (trail) => await formatFeature(trail, min, max)
+    const min = Math.min(...checkInNumbers);
+    const max = Math.max(...checkInNumbers);
+
+    const formattedTrails = trailObjects.map((trail) =>
+        formatFeature(trail, min, max)
     );
 
     res.send({
@@ -69,27 +109,67 @@ featureRouter.get('/parks', async (req, res) => {
         res.status(500).send(err);
     }
 
-    let max = 0;
-    let min = 100;
+    const parkObjects = [];
+    const checkInNumbers = [];
 
     try {
         for (let i = 0; i < parks.length; i++) {
-            let numCheckIns = await queryFeaturesByIdAndRange(
+            const checkInDocs = await queryFeaturesByIdAndRange(
                 parks[i]._id,
                 new Date(2021, 9, 1),
                 new Date(2021, 9, 31)
             );
 
-            if (numCheckIns.length > max) max = numCheckIns.length;
-            if (numCheckIns.length < min) min = numCheckIns.length;
+            const {
+                _id,
+                featureType,
+                geometry,
+                name,
+                trailNumber,
+                island,
+                district,
+                features,
+                amenities,
+                hazards,
+                climate,
+                elevationGain,
+                difficulty,
+                startPoint,
+                endPoint,
+            } = parks[i];
+
+            const Feature = {};
+
+            Feature.traffic = checkInDocs.length;
+            Feature._id = _id;
+            Feature.featureType = featureType;
+            Feature.geometry = geometry;
+            Feature.name = name;
+            Feature.trailNumber = trailNumber;
+            Feature.island = island;
+            Feature.district = district;
+            Feature.features = features;
+            Feature.amenities = amenities;
+            Feature.hazards = hazards;
+            Feature.climate = climate;
+            Feature.elevationGain = elevationGain;
+            Feature.difficulty = difficulty;
+            Feature.startPoint = startPoint;
+            Feature.endPoint = endPoint;
+
+            parkObjects.push(Feature);
+            checkInNumbers.push(checkInDocs.length);
         }
     } catch (err) {
         console.log(err);
         res.status(500).send(err);
     }
 
-    const formattedParks = parks.map(
-        (park) => await formatFeatures(park, min, max)
+    const min = Math.min(...checkInNumbers);
+    const max = Math.max(...checkInNumbers);
+
+    const formattedParks = parkObjects.map((park) =>
+        formatFeature(park, min, max)
     );
 
     res.send({
