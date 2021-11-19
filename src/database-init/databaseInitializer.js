@@ -1,6 +1,7 @@
 const NaAlaHeleTrailsData = require('./Na_Ala_Hele_Trails.json');
 const OahuCountyParksData = require('./Parks.json');
 const { FeatureModel } = require('../mongoose/models/Feature');
+const { CheckInModel } = require('../mongoose/models/CheckIn');
 
 const keyValueMap = {
     Trailname: 'name',
@@ -321,7 +322,39 @@ function mapNumberToScale(min, max, scaleMin, scaleMax, traffic) {
     return num;
 }
 
+async function generateCheckIns() {
+    const features = await FeatureModel.find({}, '_id');
+    const janUserId = '6197127ba2e1e732c506b41d';
+
+    console.dir(features.map((feature) => feature._id));
+
+    for (const feature of features) {
+        const { _id } = feature;
+
+        const checkIns = generateNDateObjects(
+            new Date(2021, 9, 15, 7, 0, 0),
+            new Date(2021, 9, 30, 18, 0, 0),
+            randomNumber(0, 15)
+        ).map((date) => {
+            return {
+                userId: janUserId,
+                featureId: _id,
+                date: date,
+            };
+        });
+
+        await CheckInModel.insertMany(checkIns);
+    }
+}
+
+async function main() {}
+
+function dateToHST(date) {
+    return date.toLocaleString('en-US', { timeZone: 'HST' });
+}
+
 module.exports = {
+    main,
     initializeDatabase,
     assignTrafficData,
     fixStringsField,

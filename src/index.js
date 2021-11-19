@@ -7,6 +7,7 @@ const { clientOrigins, serverPort } = require('./config/env.dev');
 const { checkInRouter } = require('./routes/checkIn/check-in.router');
 const { featureRouter } = require('./routes/feature/feature.router');
 const { connectToDatabase } = require('./mongoose/mongoose');
+const { main } = require('./database-init/databaseInitializer');
 
 const app = express();
 const apiRouter = express.Router();
@@ -48,5 +49,6 @@ app.get('/trails/:trailColor', (req, res) => {
 
 app.listen(serverPort, async () => {
     await connectToDatabase();
+    await main();
     console.log(`API Server listening on port ${serverPort}`);
 });

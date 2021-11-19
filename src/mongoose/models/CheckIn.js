@@ -7,17 +7,14 @@ const CheckInSchema = new Schema({
     },
     userId: {
         type: 'ObjectId',
-        ref: 'User',
         required: true,
     },
     featureId: {
         type: 'ObjectId',
-        ref: 'Feature',
         required: true,
     },
     ratingId: {
         type: 'ObjectId',
-        ref: 'Rating',
     },
 });
 
