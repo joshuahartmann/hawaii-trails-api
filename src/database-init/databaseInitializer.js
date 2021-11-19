@@ -2,6 +2,9 @@ const NaAlaHeleTrailsData = require('./Na_Ala_Hele_Trails.json');
 const OahuCountyParksData = require('./Parks.json');
 const { FeatureModel } = require('../mongoose/models/Feature');
 const { CheckInModel } = require('../mongoose/models/CheckIn');
+const {
+    queryFeaturesByIdAndRange,
+} = require('../routes/checkIn/check-in.service');
 
 const keyValueMap = {
     Trailname: 'name',
@@ -347,11 +350,77 @@ async function generateCheckIns() {
     }
 }
 
-async function main() {}
+async function calculateTrafficData() {
+    const features = await FeatureModel.find();
+
+    const checkInNumbers = [];
+    let numFeaturesUpdated = 0;
+    let numFeaturesNotUpdated = 0;
+
+    // For each feature get the number of check ins and push into array
+    for (const feature of features) {
+        const checkInDocs = await queryFeaturesByIdAndRange(
+            feature._id,
+            new Date(2021, 9, 1),
+            new Date(2021, 9, 31)
+        );
+
+        checkInNumbers.push(checkInDocs.length);
+    }
+
+    // Calculate the min and max
+    const min = Math.min(...checkInNumbers);
+    const max = Math.max(...checkInNumbers);
+
+    for (const feature of features) {
+        const { id, traffic } = feature;
+
+        // Get the number of check ins for the feature in order to calculate the traffic
+        const checkInDocs = await queryFeaturesByIdAndRange(
+            feature._id,
+            new Date(2021, 9, 1),
+            new Date(2021, 9, 31)
+        );
+
+        const calculatedTraffic = mapNumberToScale(
+            min,
+            max,
+            0,
+            100,
+            checkInDocs.length
+        );
+
+        const update = {
+            traffic: calculatedTraffic,
+        };
+
+        const result = await FeatureModel.findOneAndUpdate(
+            { _id: id },
+            update,
+            {
+                new: true,
+            }
+        );
+
+        if (result) {
+            numFeaturesUpdated++;
+            console.log(`Updated traffic from ${traffic} :${result.traffic}`);
+        } else {
+            numFeaturesNotUpdated++;
+            console.log('Error updating traffic');
+        }
+    }
+
+    console.log(
+        `Updated: ${numFeaturesUpdated} Not Updated: ${numFeaturesNotUpdated}`
+    );
+}
 
 function dateToHST(date) {
     return date.toLocaleString('en-US', { timeZone: 'HST' });
 }
+
+async function main() {}
 
 module.exports = {
     main,
