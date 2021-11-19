@@ -40,6 +40,14 @@ const queryRange = async (start, end) => {
     };
 };
 
+const queryFeaturesByIdAndRange = async (featureId, start, end) => {
+    const checkInDocs = await CheckInModel.find({
+        featureId,
+        date: { $gt: start, $lt: end },
+    });
+    return checkInDocs;
+};
+
 const pointInPolygon = (polygon, point) => {
     let ret = false;
     const points = polygon.coordinates[0];
@@ -103,4 +111,5 @@ module.exports = {
     queryRange,
     pointInPolygon,
     pointNearLine,
+    queryFeaturesByIdAndRange,
 };
