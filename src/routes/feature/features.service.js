@@ -1,4 +1,6 @@
+const { mapNumberToScale } = require('../../database-init/databaseInitializer');
 const { FeatureModel } = require('../../mongoose/models/Feature');
+const { queryFeaturesByIdAndRange } = require('../checkIn/check-in.service');
 
 async function getFeaturesByType(featureType) {
     const features = await FeatureModel.find({ featureType });
@@ -6,13 +8,12 @@ async function getFeaturesByType(featureType) {
     return features;
 }
 
-function formatFeatures(feature) {
+async function formatFeature(feature, min, max) {
     const {
         _id,
         featureType,
         geometry,
         name,
-        traffic,
         trailNumber,
         island,
         district,
@@ -25,13 +26,18 @@ function formatFeatures(feature) {
         startPoint,
         endPoint,
     } = feature;
+    const traffic = await queryFeaturesByIdAndRange(
+        _id,
+        new Date(2021, 9, 1),
+        new Date(2021, 9, 31)
+    );
     return {
         type: 'Feature',
         properties: {
             id: _id,
             featureType,
             name,
-            traffic,
+            traffic: mapNumberToScale(min, max, 0, 100, traffic.length),
             difficulty,
             trailNumber,
             island,
@@ -50,5 +56,5 @@ function formatFeatures(feature) {
 
 module.exports = {
     getFeaturesByType,
-    formatFeatures,
+    formatFeature,
 };

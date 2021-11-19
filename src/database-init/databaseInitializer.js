@@ -360,4 +360,5 @@ module.exports = {
     fixStringsField,
     initializeParksData,
     populateFeatureTypeField,
+    mapNumberToScale,
 };

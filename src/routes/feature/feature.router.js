@@ -50,8 +50,8 @@ featureRouter.get('/trails', async (req, res) => {
         res.status(500).send(err);
     }
 
-    const formattedTrails = trails.map((trail) =>
-        formatFeature(trail, min, max)
+    const formattedTrails = trails.map(
+        (trail) => await formatFeature(trail, min, max)
     );
 
     res.send({
@@ -69,7 +69,28 @@ featureRouter.get('/parks', async (req, res) => {
         res.status(500).send(err);
     }
 
-    const formattedParks = parks.map(formatFeatures);
+    let max = 0;
+    let min = 100;
+
+    try {
+        for (let i = 0; i < parks.length; i++) {
+            let numCheckIns = await queryFeaturesByIdAndRange(
+                parks[i]._id,
+                new Date(2021, 9, 1),
+                new Date(2021, 9, 31)
+            );
+
+            if (numCheckIns.length > max) max = numCheckIns.length;
+            if (numCheckIns.length < min) min = numCheckIns.length;
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+
+    const formattedParks = parks.map(
+        (park) => await formatFeatures(park, min, max)
+    );
 
     res.send({
         type: 'FeatureCollection',
