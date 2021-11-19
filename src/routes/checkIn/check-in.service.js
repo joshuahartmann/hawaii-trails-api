@@ -1,9 +1,22 @@
-const {
-    CheckInSchema,
-    CheckInModel,
-} = require('../../mongoose/models/CheckIn');
-
 const classifyPoint = require('robust-point-in-polygon');
+const { CheckInModel } = require('../../mongoose/models/CheckIn');
+const { UserModel } = require('../../mongoose/models/User');
+const { FeatureModel } = require('../../mongoose/models/Feature');
+
+async function isUserInDatabase(email) {
+    const user = await UserModel.findOne({ username: email }).exec();
+    return !!user;
+}
+
+async function isTrailInDatabase(featureId) {
+    const trail = await FeatureModel.findById(featureId).exec();
+    return !!trail;
+}
+
+async function findUser(email) {
+    const user = await UserModel.findOne({ username: email }).exec();
+    return user;
+}
 
 const postCheckin = async (user, trail) => {
     await CheckinsModel.create({ email: user.email, trail });
@@ -82,6 +95,9 @@ const pointNearLine = (geometry, point) => {
 };
 
 module.exports = {
+    isUserInDatabase,
+    findUser,
+    isTrailInDatabase,
     postCheckin,
     createCheckin,
     queryRange,

@@ -3,7 +3,8 @@ const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const { clientOrigins, serverPort } = require('./config/env.dev');
-const { checkinsRouter } = require('./routes/checkins/checkins.router');
+// const { checkinsRouter } = require('./routes/checkins/checkins.router');
+const { checkInRouter } = require('./routes/checkIn/check-in.router');
 const { featureRouter } = require('./routes/feature/feature.router');
 const { connectToDatabase } = require('./mongoose/mongoose');
 
@@ -17,7 +18,7 @@ app.use(express.json());
 app.use('/api', apiRouter);
 
 // routes
-apiRouter.use('/checkins', checkinsRouter);
+apiRouter.use('/check-in', checkInRouter);
 apiRouter.use('/features', featureRouter);
 
 app.get('/', (req, res) => {
