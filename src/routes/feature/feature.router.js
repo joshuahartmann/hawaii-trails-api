@@ -1,8 +1,11 @@
 const express = require('express');
 const { checkJwt } = require('../../authz/check-jwt');
+const { CheckInModel } = require('../../mongoose/models/CheckIn');
 const { FeatureModel } = require('../../mongoose/models/Feature');
 const { queryFeaturesByIdAndRange } = require('../checkIn/check-in.service');
 const { getFeaturesByType, formatFeature } = require('./features.service');
+const { mapNumberToScale } = require('../../database-init/databaseInitializer');
+
 const featureRouter = express.Router();
 
 featureRouter.get('/', async (req, res) => {
@@ -181,15 +184,68 @@ featureRouter.get('/parks', async (req, res) => {
 featureRouter.get('/feature/:featureId', async (req, res) => {
     const { featureId } = req.params;
 
-    const fields =
-        'features featureType amenities hazards climate _id name trailNumber island district lengthMi difficulty startPoint endPoint rating traffic';
-
-    if (featureId && featureId !== 'undefined') {
-        const feature = await FeatureModel.findById(featureId, fields).exec();
-        res.send(feature);
-    } else {
+    if (!featureId || featureId === 'undefined') {
         res.status(400).send('No featureId provided');
     }
+
+    const fields =
+        'features featureType amenities hazards climate _id name trailNumber island district lengthMi difficulty startPoint endPoint rating';
+
+    const feature = await FeatureModel.findById(featureId, fields).exec();
+
+    const checkInDocs = await queryFeaturesByIdAndRange(
+        feature._id,
+        new Date(2021, 9, 1),
+        new Date(2021, 9, 31)
+    );
+
+    const features = await FeatureModel.find(
+        { featureType: feature.featureType },
+        '_id'
+    );
+
+    const checkInNumbers = [];
+
+    for (const f of features) {
+        const checkInDocs = await CheckInModel.find(
+            { featureId: f._id },
+            '_id'
+        );
+        checkInNumbers.push(checkInDocs.length);
+    }
+
+    const min = Math.min(...checkInNumbers);
+    const max = Math.max(...checkInNumbers);
+
+    const traffic = mapNumberToScale(min, max, 0, 100, checkInDocs.length);
+
+    const Feature = {};
+
+    const keys = [
+        'features',
+        'featureType',
+        'amenities',
+        'hazards',
+        'climate',
+        '_id',
+        'name',
+        'trailNumber',
+        'island',
+        'district',
+        'lengthMi',
+        'difficulty',
+        'startPoint',
+        'endPoint',
+        'rating',
+    ];
+
+    for (const key of keys) {
+        Feature[key] = feature[key];
+    }
+
+    Feature.traffic = traffic;
+
+    res.send(Feature);
 });
 
 module.exports = {
