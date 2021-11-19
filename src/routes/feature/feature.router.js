@@ -1,7 +1,8 @@
 const express = require('express');
 const { checkJwt } = require('../../authz/check-jwt');
 const { FeatureModel } = require('../../mongoose/models/Feature');
-const { getFeaturesByType, formatFeatures } = require('./features.service');
+const { queryFeaturesByIdAndRange } = require('../checkIn/check-in.service');
+const { getFeaturesByType, formatFeature } = require('./features.service');
 const featureRouter = express.Router();
 
 featureRouter.get('/', async (req, res) => {
@@ -30,7 +31,28 @@ featureRouter.get('/trails', async (req, res) => {
         res.status(500).send(err);
     }
 
-    const formattedTrails = trails.map(formatFeatures);
+    let max = 0;
+    let min = 100;
+
+    try {
+        for (let i = 0; i < trails.length; i++) {
+            let numCheckIns = await queryFeaturesByIdAndRange(
+                trails[i]._id,
+                new Date(2021, 9, 1),
+                new Date(2021, 9, 31)
+            );
+
+            if (numCheckIns.length > max) max = numCheckIns.length;
+            if (numCheckIns.length < min) min = numCheckIns.length;
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+
+    const formattedTrails = trails.map((trail) =>
+        formatFeature(trail, min, max)
+    );
 
     res.send({
         type: 'FeatureCollection',
