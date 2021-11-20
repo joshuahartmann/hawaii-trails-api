@@ -441,24 +441,29 @@ async function populateFeatureWithCheckIns(
     await CheckInModel.insertMany(checkIns);
 }
 
-async function main() {
+async function populateAllFeaturesWithCheckInsInOctober() {
     const october03 = new Date(2021, 9, 3, 7, 0, 0);
     const october09 = new Date(2021, 9, 9, 18, 0, 0);
-    const numberOfCheckIns = 300;
+    const numberOfCheckIns = 500;
     const alaMoanaBeachPark = '6192f3e76e28020767f83fce';
+    const kuliouou = '61908d72012f251069bd4ae5';
 
-    // await populateFeatureWithCheckIns(
-    //     alaMoanaBeachPark,
-    //     october03,
-    //     october09,
-    //     numberOfCheckIns
-    // );
+    const features = await FeatureModel.find({}, '_id');
 
-    // const alaMoanaCheckIns = await CheckInModel.find({
-    //     featureId: '6192f3e76e28020767f83fce',
-    // });
-    // console.log(alaMoanaCheckIns.length);
+    for (const feature of features) {
+        const { _id } = feature;
+
+        const numberOfCheckIns = randomNumber(100, 500);
+        await populateFeatureWithCheckIns(
+            _id,
+            october03,
+            october09,
+            numberOfCheckIns
+        );
+    }
 }
+
+async function main() {}
 
 module.exports = {
     main,
