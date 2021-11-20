@@ -46,7 +46,7 @@ const queryFeaturesByIdAndRange = async (featureId, start, end) => {
             featureId,
             date: { $gt: start, $lt: end },
         },
-        '_id'
+        '_id date'
     );
     return checkInDocs;
 };

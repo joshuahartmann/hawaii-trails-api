@@ -3,8 +3,13 @@ const { checkJwt } = require('../../authz/check-jwt');
 const { CheckInModel } = require('../../mongoose/models/CheckIn');
 const { FeatureModel } = require('../../mongoose/models/Feature');
 const { queryFeaturesByIdAndRange } = require('../checkIn/check-in.service');
-const { getFeaturesByType, formatFeature } = require('./features.service');
+const {
+    getFeaturesByType,
+    formatFeature,
+    extractTimeData,
+} = require('./features.service');
 const { mapNumberToScale } = require('../../database-init/databaseInitializer');
+const { isTrailInDatabase } = require('../checkIn/check-in.service');
 
 const featureRouter = express.Router();
 
@@ -72,6 +77,30 @@ featureRouter.get('/feature/:featureId', async (req, res) => {
     const feature = await FeatureModel.findById(featureId, fields).exec();
 
     res.send(feature);
+});
+
+featureRouter.get('/feature/statistics/:featureId', async (req, res) => {
+    const { featureId } = req.params;
+
+    if (!featureId || featureId === 'undefined') {
+        res.status(400).send('No featureId provided');
+    }
+
+    const featureExists = await isTrailInDatabase(featureId);
+
+    if (!featureExists) {
+        res.status(400).send('Trail does not exist');
+    }
+
+    const checkInDocs = await queryFeaturesByIdAndRange(
+        featureId,
+        new Date(2021, 9, 1),
+        new Date(2021, 9, 31)
+    );
+
+    const timeData = await extractTimeData(checkInDocs);
+
+    res.send(timeData);
 });
 
 module.exports = {

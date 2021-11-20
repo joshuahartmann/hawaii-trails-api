@@ -420,7 +420,45 @@ function dateToHST(date) {
     return date.toLocaleString('en-US', { timeZone: 'HST' });
 }
 
-async function main() {}
+async function populateFeatureWithCheckIns(
+    featureId,
+    start,
+    end,
+    numberOfCheckIns
+) {
+    const janUserId = '6197127ba2e1e732c506b41d';
+
+    const checkIns = generateNDateObjects(start, end, numberOfCheckIns).map(
+        (date) => {
+            return {
+                userId: janUserId,
+                featureId: featureId,
+                date: date,
+            };
+        }
+    );
+
+    await CheckInModel.insertMany(checkIns);
+}
+
+async function main() {
+    const october03 = new Date(2021, 9, 3, 7, 0, 0);
+    const october09 = new Date(2021, 9, 9, 18, 0, 0);
+    const numberOfCheckIns = 300;
+    const alaMoanaBeachPark = '6192f3e76e28020767f83fce';
+
+    // await populateFeatureWithCheckIns(
+    //     alaMoanaBeachPark,
+    //     october03,
+    //     october09,
+    //     numberOfCheckIns
+    // );
+
+    // const alaMoanaCheckIns = await CheckInModel.find({
+    //     featureId: '6192f3e76e28020767f83fce',
+    // });
+    // console.log(alaMoanaCheckIns.length);
+}
 
 module.exports = {
     main,
