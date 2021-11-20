@@ -8,7 +8,7 @@ async function getFeaturesByType(featureType) {
     return features;
 }
 
-function formatFeature(feature, min, max) {
+function formatFeature(feature) {
     const {
         _id,
         featureType,
@@ -34,7 +34,7 @@ function formatFeature(feature, min, max) {
             id: _id,
             featureType,
             name,
-            traffic: mapNumberToScale(min, max, 0, 100, traffic),
+            traffic,
             difficulty,
             trailNumber,
             island,
