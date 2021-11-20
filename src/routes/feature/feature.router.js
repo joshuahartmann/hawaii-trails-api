@@ -9,6 +9,7 @@ const {
     extractTimeData,
 } = require('./features.service');
 const { mapNumberToScale } = require('../../database-init/databaseInitializer');
+const { isTrailInDatabase } = require('../checkIn/check-in.service');
 
 const featureRouter = express.Router();
 
@@ -75,18 +76,31 @@ featureRouter.get('/feature/:featureId', async (req, res) => {
 
     const feature = await FeatureModel.findById(featureId, fields).exec();
 
+    res.send(feature);
+});
+
+featureRouter.get('/feature/statistics/:featureId', async (req, res) => {
+    const { featureId } = req.params;
+
+    if (!featureId || featureId === 'undefined') {
+        res.status(400).send('No featureId provided');
+    }
+
+    const featureExists = await isTrailInDatabase(featureId);
+
+    if (!featureExists) {
+        res.status(400).send('Trail does not exist');
+    }
+
     const checkInDocs = await queryFeaturesByIdAndRange(
-        feature._id,
+        featureId,
         new Date(2021, 9, 1),
         new Date(2021, 9, 31)
     );
 
     const timeData = await extractTimeData(checkInDocs);
 
-    res.send({
-        feature: Feature,
-        timeData: timeData,
-    });
+    res.send(timeData);
 });
 
 module.exports = {
